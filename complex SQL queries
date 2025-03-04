@@ -1,0 +1,269 @@
+CODE	
+-1.1 Grouping students by programme and counting the number of students in each programme
+SELECT Programme, COUNT(*) AS student_count
+FROM Student
+GROUP BY Programme;
+
+-- 1.2 Grouping results by semester and calculating the average marks obtained in each semester
+SELECT Semester, AVG(MarksObtained) AS average_marks
+FROM Results
+GROUP BY Semester;
+-- 1.3 Grouping courses by course type and finding the maximum credits for each course type
+SELECT Course_type, MAX(Credits) AS max_credits
+FROM Course
+GROUP BY Course_type;
+
+-- 1.4 Grouping courses by course type and finding the average credits for each course type
+SELECT Course_type, AVG(Credits) AS avg_credits
+FROM Course
+GROUP BY Course_type;
+
+-- 1.5 Grouping students by current semester and calculating the total number of enrolled students in each semester
+SELECT Current_sem AS semester, COUNT(*) AS student_count
+FROM Student
+GROUP BY Current_sem;
+
+-- 1.6 Grouping results by grade and finding the number of students who received each grade
+SELECT Grade, COUNT(*) AS grade_count
+FROM Results
+GROUP BY Grade;
+
+-- 1.7 Grouping exams by course and calculating the total number of exams conducted for each course
+SELECT Course_id, COUNT(*) AS exam_count
+FROM Exam
+GROUP BY Course_id;
+
+-- 1.8 Grouping students by programme and semester to find the average marks obtained by students in each programme and semester
+SELECT Programme, Semester, AVG(MarksObtained) AS avg_marks
+FROM Student
+JOIN Results ON Student.Rollno = Results.Rollno
+GROUP BY Programme, Semester;
+
+-- 1.9 Grouping courses by programme and finding the total number of courses offered in each programme
+SELECT Programme, COUNT(*) AS course_count
+FROM Course
+GROUP BY Programme;
+
+-- 1.10 Grouping results by status and semester to find the average marks obtained by students in each status and semester
+SELECT Status, Semester, AVG(MarksObtained) AS avg_marks
+FROM Results
+GROUP BY Status, Semester;
+
+
+-- 2.1 Finding programmes with more than 2 students enrolled and selecting only those programmes
+SELECT Programme, COUNT(*) AS student_count
+FROM Student
+GROUP BY Programme
+HAVING COUNT(*) > 2;
+
+-- 2.2 Finding semesters with an average mark above 80 and selecting only those semesters
+SELECT Semester, AVG(MarksObtained) AS average_marks
+FROM Results
+GROUP BY Semester
+HAVING AVG(MarksObtained) > 80;
+
+-- 2.3 Finding courses with more than 3 credits and selecting only those courses
+SELECT Course_name, Credits
+FROM Course
+GROUP BY Course_name, Credits
+HAVING Credits > 3;
+
+-- 2.4 Finding programmes with an average current semester greater than 3 and selecting only those programmes
+SELECT Programme, AVG(Current_sem) AS avg_current_sem
+FROM Student
+GROUP BY Programme
+HAVING AVG(Current_sem) > 3;
+
+-- 2.5 Finding semesters with more than 5 students enrolled and selecting only those semesters
+SELECT Semester, COUNT(*) AS student_count
+FROM Results
+GROUP BY Semester
+HAVING COUNT(*) > 5;
+
+-- 2.6 Finding courses with an average of credits greater than or equal to 3 and selecting only those courses
+SELECT Course_name, AVG(Credits) AS avg_credits
+FROM Course
+GROUP BY Course_name
+HAVING AVG(Credits) >= 3;
+
+-- 2.7 Finding grades with more than 2 students achieved and selecting only those grades
+SELECT Grade, COUNT(*) AS grade_count
+FROM Results
+GROUP BY Grade
+HAVING COUNT(*) > 2;
+
+-- 2.8 Finding programmes with an average number of enrolled students greater than 1 and selecting only those programmes
+SELECT Programme, AVG(Current_sem) AS avg_enrolled_students
+FROM Student
+GROUP BY Programme
+HAVING AVG(Current_sem) > 1;
+
+-- 2.9 Finding semesters with an average marks obtained greater than 70 and selecting only those semesters
+SELECT Semester, AVG(MarksObtained) AS avg_marks
+FROM Results
+GROUP BY Semester
+HAVING AVG(MarksObtained) > 70;
+
+-- 2.10 Finding courses with more than 2 exams conducted and selecting only those courses
+SELECT Course_id, COUNT(*) AS exam_count
+FROM Exam
+GROUP BY Course_id
+HAVING COUNT(*) > 2;
+
+
+
+-- 3.1 Selecting students who have enrolled in courses with credits greater than or equal to 4
+SELECT *
+FROM Student
+WHERE Rollno IN (SELECT Rollno FROM Results WHERE MarksObtained >= 60);
+
+-- 3.2 Selecting courses where the maximum marks are greater than or equal to 80
+SELECT *
+FROM Course
+WHERE Course_id IN (SELECT Course_id FROM Exam WHERE Maxmark >= 80);
+
+-- 3.3 Selecting courses where the prerequisite is 'Mathematics' and credits are less than 4
+SELECT *
+FROM Course
+WHERE Prerequisite = 'Mathematics' AND Credits < 4;
+
+-- 3.4 Selecting students who have enrolled in courses with credits greater than the average number of credits
+SELECT *
+FROM Student
+WHERE Rollno IN (SELECT Rollno FROM Results WHERE Semester = 1);
+
+-- 3.5 Selecting courses where the number of enrolled students is less than the average number of enrolled students across all courses
+SELECT Course_id, Course_name
+FROM Course
+WHERE Course_id IN (SELECT Course_id FROM Results GROUP BY Course_id HAVING COUNT(*) < (SELECT AVG(enrolled_students) FROM (SELECT Course_id, COUNT(*) AS enrolled_students FROM Results GROUP BY Course_id) AS avg_enrolled));
+
+-- 3.6 Selecting students who have obtained grades better than the average grade
+SELECT *
+FROM Student
+WHERE Rollno IN (
+    SELECT Rollno
+    FROM Results
+    WHERE Grade > (SELECT AVG(Grade) FROM Results)
+);
+
+
+-- 3.7 Selecting courses where the average marks obtained by students are greater than the average marks obtained across all courses
+SELECT *
+FROM Student
+WHERE Rollno IN (
+    SELECT Rollno
+    FROM Results
+    WHERE Programme = 'CMPN'
+);
+
+-- 3.8 Selecting courses where the prerequisite is 'Mathematics' and credits are less than 4 using a nested query
+SELECT *
+FROM Course
+WHERE Prerequisite = 'Mathematics' AND Course_id IN (SELECT Course_id FROM Course WHERE Credits < 4);
+
+-- 3.9 Selecting courses where the number of exams conducted is greater than the average number of exams conducted across all courses
+SELECT Course_id, COUNT(*) AS exam_count
+FROM Exam
+GROUP BY Course_id;
+
+
+-- 3.10 Selecting students who have obtained marks greater than the average marks obtained by students in the same semester
+SELECT *
+FROM Student
+WHERE Rollno IN (SELECT Rollno FROM Results AS R1 WHERE MarksObtained > (SELECT AVG(MarksObtained) FROM Results AS R2 WHERE R1.Semester = R2.Semester));
+
+
+-- 4.1 Using a common table expression (CTE) to find the average marks obtained in exams
+WITH ExamAverage AS (
+    SELECT AVG(Maxmark) AS avg_max_mark
+    FROM Exam
+)
+SELECT *
+FROM ExamAverage;
+
+-- 4.2 Calculating the total number of enrolled students for each programme
+WITH EnrolledStudentsPerProgramme AS (
+    SELECT Programme, COUNT(*) AS total_students
+    FROM Student
+    GROUP BY Programme
+)
+SELECT *
+FROM EnrolledStudentsPerProgramme;
+
+-- 4.3 Calculating the average marks obtained by students in each semester
+WITH AverageMarksPerSemester AS (
+    SELECT Semester, AVG(MarksObtained) AS average_marks
+    FROM Results
+    GROUP BY Semester
+)
+SELECT *
+FROM AverageMarksPerSemester;
+
+
+-- 4.4 Finding the maximum credits for each course type
+WITH MaxCreditsPerCourseType AS (
+    SELECT Course_type, MAX(Credits) AS max_credits
+    FROM Course
+    GROUP BY Course_type
+)
+SELECT *
+FROM MaxCreditsPerCourseType;
+
+-- 4.5 Calculating the average hour and minute for each exam
+WITH AverageExamTime AS (
+    SELECT AVG(Hour) AS avg_hour, AVG(Min) AS avg_minute
+    FROM Exam
+)
+SELECT *
+FROM AverageExamTime;
+
+-- 4.6 Finding the number of exams conducted for each course
+WITH ExamsPerCourse AS (
+    SELECT Course_id, COUNT(*) AS exam_count
+    FROM Exam
+    GROUP BY Course_id
+)
+SELECT *
+FROM ExamsPerCourse;
+
+-- 4.7 Calculating the total number of courses offered for each programme
+WITH MaxMarksPerExam AS (
+    SELECT ExamID, MAX(MaxMark) AS max_marks
+    FROM Exam
+    GROUP BY ExamID
+)
+SELECT *
+FROM MaxMarksPerExam;
+
+
+
+-- 4.8 Finding the average credits for each course type
+WITH AvgCreditsPerCourseType AS (
+    SELECT Course_type, AVG(Credits) AS avg_credits
+    FROM Course
+    GROUP BY Course_type
+)
+SELECT *
+FROM AvgCreditsPerCourseType;
+
+-- 4.9 Calculating the average marks obtained by students in each status
+WITH AvgMarksPerStatus AS (
+    SELECT Status, AVG(MarksObtained) AS avg_marks
+    FROM Results
+    GROUP BY Status
+)
+SELECT *
+FROM AvgMarksPerStatus;
+
+-- 4.10 Finding the minimum hour and minute for each exam
+WITH MinExamTime AS (
+    SELECT MIN(Hour) AS min_hour, MIN(Min) AS min_minute
+    FROM Exam
+)
+SELECT *
+FROM MinExamTime;
+
+
+
+
+
