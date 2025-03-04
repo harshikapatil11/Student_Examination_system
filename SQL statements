@@ -1,0 +1,48 @@
+code	1.simple SQL statements with or without order by clause (05)
+ select*from Student
+ORDER BY First_name ASC;
+SELECT First_name, Programme FROM Student WHERE Programme = 'CMPN';
+SELECT Rollno, COUNT(*) AS enrolled_courses_count FROM Results GROUP BY Rollno;
+SELECT First_name, Current_sem AS age FROM Student;
+
+
+2.SQL statements with aggregate functions (05)
+ select*from Results;
+SELECT * FROM Results WHERE Rollno IN (SELECT Rollno FROM Student WHERE Programme IN ('IT', 'CMPN'));
+SELECT Grade FROM Results WHERE MarksObtained < 60;
+SELECT COUNT(*) AS pass_count FROM Results WHERE Status = 'Pass';
+SELECT * FROM Results WHERE Semester = 1;
+
+3.SQL statements with different types of joins (05)
+SELECT * FROM Student INNER JOIN Results ON Student.Rollno = Results.Rollno;
+SELECT * FROM Course LEFT JOIN Exam ON Course.Course_id = Exam.Course_id;
+SELECT Course.Course_id, Course.Course_name, Exam.ExamID, Exam.MaxMark FROM Course
+INNER JOIN Exam ON Course.Course_id = Exam.Course_id;
+SELECT * FROM Course Right JOIN Exam ON Course.Course_id = Exam.Course_id;
+SELECT * FROM Student OUTER JOIN Results ON Student.Rollno = Results.Rollno;
+
+
+4.nested queries using various connectors such as in, union, intersect, etc (05)
+SELECT*FROM course;
+SELECT AVG(Credits) AS average_credits FROM Course;
+SELECT MAX(Credits) AS highest_credits FROM Course;
+SELECT MIN(Credits) AS lowest_credits FROM Course;
+SELECT COUNT(*) AS total_courses FROM Course;
+
+SELECT * FROM Course WHERE Course_type IN ('Elective', 'Core');
+SELECT Course_name FROM Course WHERE Course_id IN (SELECT Course_id FROM Exam WHERE credits < 3);
+SELECT Course_id FROM Course WHERE Credits > 3 UNION
+SELECT Course_id FROM Exam WHERE Hour >= 2 AND Min >= 30;
+SELECT Course_id FROM Course WHERE Credits > 3;
+SELECT * FROM Course WHERE prerequisite IN ('Mathematics');
+
+5.complex queries of your choice (05)
+select*from Exam;
+SELECT *FROM Exam WHERE Maxmark = (SELECT MAX(Maxmark) FROM Exam);
+SELECT AVG(Maxmark) AS average_max_marks FROM Exam;
+SELECT *FROM Exam WHERE Maxmark >= 70;
+SELECT COUNT(*) AS exams_after_2_30 FROM Exam WHERE Hour > 2 OR (Hour = 2 AND Min > 30);
+SELECT SUM(Hour) + SUM(Min) / 60 AS total_hours
+FROM Exam;
+SELECT Hour, MAX(Maxmark) AS highest_marks FROM Exam GROUP BY Hour;
+SELECT AVG(Maxmark) AS average_marks_above_overall_average FROM Exam WHERE Maxmark > (SELECT AVG(Maxmark) FROM Exam)
