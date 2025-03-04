@@ -1,0 +1,30 @@
+Program	import psycopg2
+
+# Establishing the connection
+connection = psycopg2.connect(
+    host="localhost",
+    port="5433",  # Default PostgreSQL port
+    user="postgres",
+    password="12345678",
+    database="exam"
+)
+
+# Creating a cursor object using the cursor() method
+cursor = connection.cursor()
+
+# Executing a SQL query
+cursor.execute("SELECT Programme, COUNT(*) AS student_count FROM Student GROUP BY Programme HAVING COUNT(*) > 2")
+
+# Fetching all the rows using fetchall() method
+rows = cursor.fetchall()
+
+# Printing each row
+for row in rows:
+    print(row)
+
+# Closing the cursor
+cursor.close()
+
+# Closing the connection
+connection.close()
+
