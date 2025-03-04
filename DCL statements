@@ -1,0 +1,50 @@
+code	- Step 1: Create a user
+create user harshika with password 'ABC@123';
+create user shruti with password 'xyz@123';
+
+-- Step 3: Create a role
+CREATE ROLE girl;
+create role anshul login password 'geeks12345';
+
+-- Step 4: Grant login privileges to the role
+alter role girl WITH LOGIN;
+
+-- Step 5: Grant privileges to the role on the tables
+GRANT SELECT, INSERT, UPDATE, DELETE ON Student TO harshika;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Course TO harshika;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Exam TO harshika;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Results TO harshika;
+select * from student;
+
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON Student TO shruti;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Course TO shruti;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Exam TO shruti;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Results TO shruti;
+
+--insert
+INSERT INTO Student (Rollno, First_name, Last_name, Email, Phone_no, Programme, Current_sem, Address)
+VALUES 
+	(1027, 'arya', 'Sharma', 'riyas@gmail.com', 8798563372, 'IT', 4, 'Sunflower Society, Wing D, Vile Parle(e)-400057'),
+    (1028, 'pallavi', 'Sharma', 'rahulsh@gmail.com', 8798563352, 'IT', 3, 'Sai Enclave, Flat no. 15, Ghatkopar(e)-400077');
+--delete	
+DELETE FROM Student WHERE Programme = 'IT';
+
+--update
+UPDATE Student
+SET Email = 'new_email@example.com' 
+WHERE Rollno = 1003;
+
+--select
+SELECT First_name, Last_name 
+FROM Student 
+WHERE Programme = 'CMPN';
+
+
+1.	Create Users: Two users, 'harshika' and 'shruti', are created with corresponding passwords using the CREATE USER command. This step establishes user credentials for accessing the database.
+2.	Create Role: Two roles, 'girl' and 'anshul', are created using the CREATE ROLE command. Roles are used to group together sets of privileges that can be granted to users. In this case, the 'anshul' role is created with a login password.
+3.	Grant Login Privileges: The ALTER ROLE command is used to grant login privileges to the 'girl' role. This allows users assigned to this role to log in to the database.
+4.	Grant Privileges on Tables: GRANT statements are used to assign specific privileges (SELECT, INSERT, UPDATE, DELETE) on the tables (Student, Course, Exam, Results) to the users 'harshika' and 'shruti'. This step determines what actions each user can perform on the specified tables.
+5.	Data Manipulation Operations: The script demonstrates data manipulation operations such as insertion (INSERT INTO), deletion (DELETE FROM), and updating (UPDATE) on the 'Student' table. These operations modify the data stored in the database.
+6.	Select Query: A SELECT query is performed on the 'Student' table to retrieve the 'First_name' and 'Last_name' of students who are enrolled in the 'CMPN' program. This query demonstrates retrieving specific data based on defined criteria.
+
